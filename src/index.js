@@ -1,8 +1,9 @@
 const express = require("express");
+require('dotenv').config();
 const bodyParser = require('body-parser')
 const cors = require('cors');
 const crypto = require('node:crypto')
-require('dotenv').config();
+const { apiRouter } = require('./routes');
 
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
@@ -24,12 +25,14 @@ app.get('/', async (req, res) => {
     res.status(200).json('habit-tracker:server' + new Date());
 });
 
+app.use('/api', apiRouter);
+
 app.use((req, res, next) => {
     res.status(404).send('404: Page not found');
 });
 
 const server = app.listen(PORT, HOST, () => {
-    console.log(`Running on https://${HOST}:${PORT}`);
+    console.log(`Running on http://${HOST}:${PORT}`);
 });
 
 function shutdown() 
