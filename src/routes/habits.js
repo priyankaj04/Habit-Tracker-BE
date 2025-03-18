@@ -1,23 +1,12 @@
 const express = require("express");
 const habitRouter = express.Router();
-const jwt = require("jsonwebtoken");
+const { authenticate } = require('../utils');
 const { supabase } = require('../db/supabase');
 
-const authenticate = async (req, res, next) => {
-    const token = req.header("Authorization") && req.header("Authorization").replace(/^Bearer\s+/, "");;
-    if (!token) return res.status(401).json({ status: 0, error: "Access denied. No token provided." });
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.userId = decoded.userId;
-        next();
-    } catch (error) {
-        res.status(401).json({ status: 0, error: "Invalid token." });
-    }
-};
+habitRouter.use(authenticate);
 
 // Add a new habit
-habitRouter.post("/", authenticate, async (req, res) => {
+habitRouter.post("/", async (req, res) => {
     try {
         const { name } = req.body;
         if (!name) return res.status(400).json({ status: 0, error: "Habit name is required" });
@@ -38,7 +27,7 @@ habitRouter.post("/", authenticate, async (req, res) => {
 
 
 // Fetch all habits for the logged-in user
-habitRouter.get("/all", authenticate, async (req, res) => {
+habitRouter.get("/all", async (req, res) => {
     try {
         const { data, error } = await supabase
             .from("habits")
@@ -54,7 +43,7 @@ habitRouter.get("/all", authenticate, async (req, res) => {
 });
 
 // Delete a habit
-habitRouter.delete("/:id", authenticate, async (req, res) => {
+habitRouter.delete("/:id", async (req, res) => {
     try {
         const habitId = req.params.id;
 
