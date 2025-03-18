@@ -24,7 +24,7 @@ authRouter.post("/register", async (req, res) => {
         res.json({ status: 1, message: "User registered successfully!" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ status: 0, message: "Failed to register!" });
+        res.status(500).json({ status: 0, error: "Failed to register!" });
     }
 });
 
@@ -52,7 +52,7 @@ authRouter.post("/login", async (req, res) => {
         res.json({ status: 1, token });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ status: 0, message: "Failed to login!" });
+        res.status(500).json({ status: 0, error: "Failed to login!" });
     }
 });
 
