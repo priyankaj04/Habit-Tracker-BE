@@ -5,14 +5,13 @@ const { supabase } = require('../db/supabase');
 
 workoutlogRouter.use(authenticate);
 
-
 workoutlogRouter.post("/", async (req, res) => {
     try {
-        const { workout_id, date, mood, session_rating } = req.body;
+        const { workout_id, date, mood, session_rating, description } = req.body;
 
         const { data, error } = await supabase
             .from("workout_logs")
-            .insert([{ user_id: req.userId, workout_id, date, mood, session_rating }])
+            .insert([{ user_id: req.userId, workout_id, date, mood, session_rating, description }])
             .select()
             .single();
 
@@ -60,12 +59,13 @@ workoutlogRouter.delete("/:id", async (req, res) => {
 workoutlogRouter.put("/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        const { mood, session_rating } = req.body;
+        const { mood, session_rating, description } = req.body;
 
         const updateFields = {};
         if (mood) updateFields.mood = mood;
         if (session_rating) updateFields.session_rating = session_rating;
-
+        if (description) updateFields.description = description;
+        
         const { data, error } = await supabase
             .from("workout_logs")
             .update(updateFields)
