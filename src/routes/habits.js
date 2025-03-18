@@ -5,7 +5,7 @@ const { supabase } = require('../db/supabase');
 
 const authenticate = async (req, res, next) => {
     const token = req.header("Authorization") && req.header("Authorization").replace(/^Bearer\s+/, "");;
-    if (!token) return res.status(401).json({ error: "Access denied. No token provided." });
+    if (!token) return res.status(401).json({ status: 0, error: "Access denied. No token provided." });
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -49,7 +49,7 @@ habitRouter.get("/all", authenticate, async (req, res) => {
         res.json({ status: 1, data: data });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ status: 0, error: "Failed to create new habit!" });
+        res.status(500).json({ status: 0, error: "Failed to fetch habits!" });
     }
 });
 
@@ -67,7 +67,7 @@ habitRouter.delete("/:id", authenticate, async (req, res) => {
         res.json({ status: 1, message: "Habit deleted successfully!" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ status: 0, error: "Failed to create new habit!" });
+        res.status(500).json({ status: 0, error: "Failed to delete habit!" });
     }
 });
 
